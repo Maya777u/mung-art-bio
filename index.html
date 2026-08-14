@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MUNG ART // آتلیه مجسمه‌سازی استیم‌پانک</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vazirmatn Font & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #060709; font-family: 'Vazirmatn', sans-serif; color: #f3f4f6; overflow-x: hidden; }
+        
+        /* Interactive Background Canvas */
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+        /* Custom Custom Glow Buttons & Panels */
+        .bio-card {
+            background: rgba(18, 22, 30, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .bio-card:active, .bio-card:hover {
+            transform: scale(1.02) translateY(-2px);
+            border-color: rgba(249, 115, 22, 0.8);
+            box-shadow: 0 0 25px rgba(249, 115, 22, 0.4), inset 0 0 10px rgba(249, 115, 22, 0.2);
+        }
+
+        .ember-button {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.4);
+            transition: all 0.25s ease;
+        }
+        .ember-button:active { transform: scale(0.97); }
+
+        /* Storytelling Animation Text */
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 15px rgba(249, 115, 22, 0.6); }
+            50% { text-shadow: 0 0 30px rgba(249, 115, 22, 0.9), 0 0 10px rgba(251, 191, 36, 0.8); }
+        }
+        .text-glow { animation: textGlow 3s infinite; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #060709; }
+        ::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 2px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 relative">
+
+    <!-- Interactive Canvas Background -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Main Mobile Showcase Container -->
+    <div class="w-full max-w-md mx-auto z-10 flex flex-col space-y-6 my-auto py-6">
+
+        <!-- Header / Storytelling Profile Section -->
+        <div class="bio-card rounded-3xl p-6 text-center relative overflow-hidden">
+            <!-- Ambient Light Overlay -->
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-40 h-40 bg-orange-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 p-0.5 shadow-xl shadow-orange-600/40 mb-4 border border-orange-400/40 relative group">
+                <div class="w-full h-full bg-[#0d1117] rounded-[14px] flex items-center justify-center overflow-hidden">
+                    <i data-lucide="anvil" class="w-10 h-10 text-orange-500 animate-pulse"></i>
+                </div>
+            </div>
+
+            <h1 class="text-xl font-black tracking-wider text-orange-400 text-glow">MUNG ART</h1>
+            <p class="text-xs text-gray-300 font-bold mt-1 tracking-wide">آتلیه مجسمه‌سازی استیم‌پانک & هنر فلزات</p>
+            <p class="text-[11px] text-gray-400 mt-2 leading-relaxed">خلق آثار منحصربه‌فرد هنری با قطعات اسقاطی و آهن‌پاره • سفارش و ارسال به سراسر کشور</p>
+        </div>
+
+        <!-- Action Links Section -->
+        <div class="flex flex-col space-y-3.5">
+
+            <!-- Telegram Button -->
+            <a href="https://t.me/mung_art" target="_blank" class="bio-card rounded-2xl p-4 flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover:scale-110 transition">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                    </div>
+                    <div class="text-right">
+                        <h3 class="font-bold text-sm text-gray-100">ارتباط در تلگرام</h3>
+                        <p class="text-[10px] text-gray-400">مشاوره، استعلام قیمت و ثبت سفارش</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-left" class="w-4 h-4 text-gray-500 group-hover:text-orange-400 transition"></i>
+            </a>
+
+            <!-- Bale Messenger Button -->
+            <a href="https://ble.ir/mung_art" target="_blank" class="bio-card rounded-2xl p-4 flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                    </div>
+                    <div class="text-right">
+                        <h3 class="font-bold text-sm text-gray-100">پیام‌رسان بله</h3>
+                        <p class="text-[10px] text-gray-400">ارسال پیام مستقیم در اپلیکیشن بله</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-left" class="w-4 h-4 text-gray-500 group-hover:text-orange-400 transition"></i>
+            </a>
+
+            <!-- Call Button -->
+            <a href="tel:09120000000" class="bio-card rounded-2xl p-4 flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition">
+                        <i data-lucide="phone-call" class="w-5 h-5"></i>
+                    </div>
+                    <div class="text-right">
+                        <h3 class="font-bold text-sm text-gray-100">تماس تلفنی مستقیم</h3>
+                        <p class="text-[10px] text-gray-400">پاسخگویی سریع برای هماهنگی و خرید</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-left" class="w-4 h-4 text-gray-500 group-hover:text-orange-400 transition"></i>
+            </a>
+
+            <!-- Location Button -->
+            <div onclick="toggleAddress()" class="bio-card rounded-2xl p-4 flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-110 transition">
+                        <i data-lucide="map-pin" class="w-5 h-5"></i>
+                    </div>
+                    <div class="text-right">
+                        <h3 class="font-bold text-sm text-gray-100">آدرس آتلیه و کارگاه</h3>
+                        <p class="text-[10px] text-gray-400">نمایش موقعیت مکانی و آدرس حضوری</p>
+                    </div>
+                </div>
+                <i data-lucide="chevron-down" id="addrChevron" class="w-4 h-4 text-gray-500 transition duration-300"></i>
+            </div>
+
+            <!-- Expandable Address Details -->
+            <div id="addressCard" class="hidden bio-card rounded-2xl p-5 text-xs space-y-3 animate-fadeIn border-t-0">
+                <p class="text-gray-300 leading-relaxed">📍 **آدرس کارگاه:** جاده هراز، محدوده پلور - آسک، آتلیه مجسمه‌سازی MUNG ART</p>
+                <div class="flex space-x-2 space-x-reverse pt-2">
+                    <a href="https://maps.google.com" target="_blank" class="flex-1 py-2 rounded-xl bg-orange-600/30 text-orange-400 border border-orange-500/40 text-center font-bold hover:bg-orange-600 hover:text-white transition">
+                        مسیریابی در گوگل مپ
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Instagram Direct Link Footer -->
+        <div class="text-center pt-2">
+            <a href="https://instagram.com/mung_art" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse text-xs font-bold text-gray-400 hover:text-orange-400 transition">
+                <i data-lucide="instagram" class="w-4 h-4 text-orange-500"></i>
+                <span>مشاهده نمونه‌کارهای بیشتر در اینستاگرام @mung_art</span>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Interactive Sparks Engine -->
+    <script>
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Particles
+        for(let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 0.5,
+                vy: -Math.random() * 1.2 - 0.3,
+                vx: (Math.random() - 0.5) * 0.6,
+                alpha: Math.random() * 0.6 + 0.2
+            });
+        }
+
+        // Touch Interaction
+        let touchX = 0, touchY = 0;
+        window.addEventListener('touchmove', (e) => {
+            touchX = e.touches[0].clientX;
+            touchY = e.touches[0].clientY;
+            for(let i=0; i<3; i++) {
+                particles.push({
+                    x: touchX,
+                    y: touchY,
+                    radius: Math.random() * 3 + 1,
+                    vy: (Math.random() - 0.5) * 2,
+                    vx: (Math.random() - 0.5) * 2,
+                    alpha: 0.9
+                });
+            }
+        });
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f97316';
+            
+            for(let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.y += p.vy;
+                p.x += p.vx;
+                p.alpha -= 0.003;
+
+                if(p.y < 0 || p.alpha <= 0) {
+                    particles[i] = {
+                        x: Math.random() * canvas.width,
+                        y: canvas.height + 10,
+                        radius: Math.random() * 2 + 0.5,
+                        vy: -Math.random() * 1.2 - 0.3,
+                        vx: (Math.random() - 0.5) * 0.6,
+                        alpha: Math.random() * 0.6 + 0.2
+                    };
+                }
+
+                ctx.globalAlpha = p.alpha;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            requestAnimationFrame(render);
+        }
+        render();
+
+        // Toggle Address Box
+        function toggleAddress() {
+            const card = document.getElementById('addressCard');
+            const chev = document.getElementById('addrChevron');
+            if(card.classList.contains('hidden')) {
+                card.classList.remove('hidden');
+                chev.style.transform = 'rotate(180deg)';
+            } else {
+                card.classList.add('hidden');
+                chev.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        window.onload = () => lucide.createIcons();
+    </script>
+</body>
+</html>
