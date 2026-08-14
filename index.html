@@ -11,7 +11,7 @@
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #050607; font-family: 'Vazirmatn', sans-serif; color: #f3f4f6; overflow-x: hidden; }
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        /* ====== CUSTOM METAL-FORGED CARDS (Riveted Steel Plates) ====== */
+        /* ====== CUSTOM METAL-FORGED CARDS ====== */
         .forged-plate {
             position: relative;
             background: linear-gradient(160deg, rgba(30, 36, 48, 0.92), rgba(12, 14, 19, 0.96));
@@ -21,8 +21,7 @@
             transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .forged-plate::before {
-            content: '';
-            position: absolute; inset: 0; border-radius: 4px; pointer-events: none;
+            content: ''; position: absolute; inset: 0; border-radius: 4px; pointer-events: none;
             background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%);
             background-size: 200% 100%; animation: sheen 4s linear infinite;
         }
@@ -33,24 +32,20 @@
         .rivet-tl { top: 6px; right: 6px; } .rivet-tr { top: 6px; left: 6px; }
         .rivet-bl { bottom: 6px; right: 6px; } .rivet-br { bottom: 6px; left: 6px; }
 
-        /* ====== STORY INTRO (Typewriter + Engrave) ====== */
-        #storyIntro { position: fixed; inset: 0; z-index: 100; background: #050607; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.8s ease; }
-        #storyIntro.hidden { opacity: 0; pointer-events: none; }
-        .typewriter { display: inline-block; overflow: hidden; white-space: nowrap; border-left: 3px solid #f97316; animation: blink 0.8s step-end infinite; font-size: 1.4rem; font-weight: 900; color: #fdba74; }
-        @keyframes blink { 50% { border-color: transparent; } }
+        /* ====== STORY INTRO ====== */
+        #storyIntro { position: fixed; inset: 0; z-index: 100; background: #050607; transition: opacity 1s ease; }
+        #storyIntro.done { opacity: 0; pointer-events: none; }
+        #introCanvas { width: 100%; height: 100%; display: block; }
 
-        /* ====== SCROLL REVEAL ANIMATIONS ====== */
         .reveal { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* ====== FLOATING ACTION DOCK (Interactive Menu) ====== */
-        #actionDock { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(80px); z-index: 60; display: flex; gap: 8px; padding: 8px; background: rgba(10, 12, 16, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(249, 115, 22, 0.4); border-radius: 18px; box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(249,115,22,0.15); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #actionDock { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(80px); z-index: 60; display: flex; gap: 8px; padding: 8px; background: rgba(10, 12, 16, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(249, 115, 22, 0.4); border-radius: 18px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         #actionDock.show { transform: translateX(-50%) translateY(0); }
-        .dock-btn { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: #151a23; border: 1px solid rgba(255,255,255,0.08); transition: all 0.25s ease; position: relative; }
+        .dock-btn { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: #151a23; border: 1px solid rgba(255,255,255,0.08); transition: all 0.25s ease; }
         .dock-btn:hover, .dock-btn:active { background: #ea580c; transform: scale(1.1) rotate(-8deg); box-shadow: 0 0 20px rgba(234, 88, 12, 0.5); }
 
-        /* Flash / Glow pulses */
-        @keyframes flashPulse { 0%, 100% { box-shadow: 0 0 8px rgba(249,115,22,0.3); } 50% { box-shadow: 0 0 30px rgba(249,115,22,0.9), 0 0 60px rgba(234,88,12,0.4); } }
+        @keyframes flashPulse { 0%, 100% { box-shadow: 0 0 8px rgba(249,115,22,0.3); } 50% { box-shadow: 0 0 30px rgba(249,115,22,0.9); } }
         .flash-glow { animation: flashPulse 2s infinite; }
 
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: #050607; } ::-webkit-scrollbar-thumb { background: #ea580c; }
@@ -58,17 +53,12 @@
 </head>
 <body class="min-h-screen relative">
 
+    <!-- Ambient ember canvas behind everything -->
     <canvas id="bgCanvas"></canvas>
 
-    <!-- ====== STORY INTRO OVERLAY ====== -->
+    <!-- ====== STORY INTRO: ROBOT WELDER ====== -->
     <div id="storyIntro">
-        <div class="w-24 h-24 mb-6 relative">
-            <div class="absolute inset-0 rounded-3xl bg-orange-600/40 blur-xl animate-pulse"></div>
-            <div class="relative w-24 h-24 rounded-3xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center border-2 border-orange-300/40 shadow-2xl">
-                <i data-lucide="anvil" class="w-12 h-12 text-white"></i>
-            </div>
-        </div>
-        <div class="typewriter text-center px-4" id="storyText"></div>
+        <canvas id="introCanvas"></canvas>
     </div>
 
     <!-- ====== MAIN CONTENT ====== -->
@@ -91,9 +81,8 @@
             <p class="text-xs text-gray-400 mt-2 leading-relaxed">خلق آثار منحصربه‌فرد از دل آهن‌پاره و قطعات اسقاطی — هر قطعه، یک داستان زنده از آتش و فلز</p>
         </div>
 
-        <!-- ACTION BUTTONS (Custom Forged Cards) -->
+        <!-- ACTION BUTTONS -->
         <div class="flex flex-col space-y-4">
-
             <a href="https://t.me/mung_art" target="_blank" class="forged-plate reveal p-4 flex items-center justify-between group cursor-pointer">
                 <div class="rivet rivet-tl"></div><div class="rivet rivet-tr"></div><div class="rivet rivet-bl"></div><div class="rivet rivet-br"></div>
                 <div class="flex items-center space-x-3 space-x-reverse">
@@ -156,15 +145,13 @@
             </div>
         </div>
 
-        <!-- INSTAGRAM FOOTER -->
         <a href="https://instagram.com/mung_art" target="_blank" class="reveal flex items-center justify-center space-x-2 space-x-reverse text-xs font-bold text-gray-400 hover:text-orange-400 transition pt-2">
             <i data-lucide="instagram" class="w-4 h-4 text-orange-500"></i>
             <span>مشاهده نمونه‌کارها در @mung_art</span>
         </a>
-
     </div>
 
-    <!-- ====== FLOATING ACTION DOCK ====== -->
+    <!-- FLOATING DOCK -->
     <div id="actionDock">
         <a href="tel:09120000000" class="dock-btn text-amber-400"><i data-lucide="phone-call" class="w-5 h-5"></i></a>
         <a href="https://t.me/mung_art" target="_blank" class="dock-btn text-sky-400"><i data-lucide="send" class="w-5 h-5"></i></a>
@@ -173,105 +160,328 @@
         <button onclick="scrollToTop()" class="dock-btn text-orange-400"><i data-lucide="arrow-up" class="w-5 h-5"></i></button>
     </div>
 
-    <!-- ====== SCRIPTS ====== -->
     <script>
-        // ===== INTERACTIVE EMBER BACKGROUND (Animated Background) =====
-        const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
+        // ============================================================
+        // 1. AMBIENT EMBER BACKGROUND (always behind, after intro)
+        // ============================================================
+        const bg = document.getElementById('bgCanvas');
+        const bgx = bg.getContext('2d');
         let W, H, embers = [], smoke = [];
-
-        function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        function resize() { W = bg.width = window.innerWidth; H = bg.height = window.innerHeight; }
         window.addEventListener('resize', resize); resize();
 
-        for (let i = 0; i < 70; i++) {
-            embers.push({
-                x: Math.random() * W, y: Math.random() * H,
-                r: Math.random() * 3 + 1.5,
-                vy: -Math.random() * 1.8 - 0.6,
-                vx: (Math.random() - 0.5) * 0.8,
-                glow: Math.random() * 0.7 + 0.3,
-                flicker: Math.random() * 0.05
+        for (let i = 0; i < 60; i++) embers.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*3+1.5, vy: -Math.random()*1.8-0.6, vx: (Math.random()-0.5)*0.8, glow: Math.random()*0.7+0.3 });
+        for (let i = 0; i < 10; i++) smoke.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*60+30, alpha: 0.04, vy: -0.15 });
+
+        let T = 0;
+        function renderBG() {
+            T += 0.016;
+            bgx.clearRect(0, 0, W, H);
+            smoke.forEach(s => { s.y += s.vy; if (s.y < -s.r) s.y = H + s.r;
+                const g = bgx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r);
+                g.addColorStop(0, `rgba(249,115,22,${s.alpha})`); g.addColorStop(1, 'rgba(249,115,22,0)');
+                bgx.fillStyle = g; bgx.beginPath(); bgx.arc(s.x, s.y, s.r, 0, Math.PI*2); bgx.fill();
             });
-        }
-        for (let i = 0; i < 12; i++) {
-            smoke.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 60 + 30, alpha: 0.04, vy: -0.15 });
-        }
-
-        let t = 0;
-        function render() {
-            t += 0.016;
-            ctx.clearRect(0, 0, W, H);
-
-            // Smoke
-            ctx.fillStyle = '#f97316';
-            smoke.forEach(s => {
-                s.y += s.vy; if (s.y < -s.r) s.y = H + s.r;
-                let g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r);
-                g.addColorStop(0, `rgba(249,115,22,${s.alpha})`);
-                g.addColorStop(1, 'rgba(249,115,22,0)');
-                ctx.fillStyle = g;
-                ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
-            });
-
-            // Embers with glow + flicker
-            embers.forEach(e => {
-                e.y += e.vy; e.x += e.vx;
+            embers.forEach(e => { e.y += e.vy; e.x += e.vx;
                 if (e.y < -10) { e.y = H + 10; e.x = Math.random() * W; }
-                const flick = Math.sin(t * 8 + e.x) * e.flicker;
-                ctx.shadowBlur = 15 * e.glow;
-                ctx.shadowColor = '#f97316';
-                ctx.fillStyle = `rgba(255, ${150 + Math.random() * 80}, 60, ${e.glow})`;
-                ctx.beginPath(); ctx.arc(e.x, e.y, e.r + flick, 0, Math.PI * 2); ctx.fill();
-                ctx.shadowBlur = 0;
+                bgx.shadowBlur = 15 * e.glow; bgx.shadowColor = '#f97316';
+                bgx.fillStyle = `rgba(255, ${150+Math.random()*80}, 60, ${e.glow})`;
+                bgx.beginPath(); bgx.arc(e.x, e.y, e.r, 0, Math.PI*2); bgx.fill();
+                bgx.shadowBlur = 0;
             });
-            requestAnimationFrame(render);
+            requestAnimationFrame(renderBG);
         }
-        render();
+        renderBG();
 
-        // Touch sparks
-        window.addEventListener('touchmove', (e) => {
-            const t = e.touches[0];
-            for (let i = 0; i < 5; i++) embers.push({ x: t.clientX, y: t.clientY, r: Math.random() * 4 + 1, vy: (Math.random() - 0.5) * 3, vx: (Math.random() - 0.5) * 3, glow: 1, flicker: 0.1 });
-        }, { passive: true });
+        // ============================================================
+        // 2. STORY INTRO — ROBOT WELDING "MUNG ART" WITH SPARKS
+        // ============================================================
+        const intro = document.getElementById('storyIntro');
+        const icv = document.getElementById('introCanvas');
+        const ictx = icv.getContext('2d');
 
-        // ===== STORY INTRO (Typewriter storytelling) =====
-        const storyText = "هر تکه آهن، یک داستان است...";
-        const storyEl = document.getElementById('storyText');
-        let i = 0;
-        const typeInterval = setInterval(() => {
-            storyEl.textContent = storyText.slice(0, i + 1);
-            i++;
-            if (i >= storyText.length) {
-                clearInterval(typeInterval);
-                setTimeout(() => {
-                    const intro = document.getElementById('storyIntro');
-                    intro.classList.add('hidden');
-                    document.body.style.overflow = 'auto';
-                }, 900);
+        function resizeIntro() { icv.width = window.innerWidth; icv.height = window.innerHeight; }
+        window.addEventListener('resize', resizeIntro);
+        resizeIntro();
+
+        const iw = () => icv.width, ih = () => icv.height;
+
+        // Sparks from torch
+        let sparks = [];
+        function spawnSparks(n, x, y) {
+            for (let i = 0; i < n; i++) {
+                sparks.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 7,
+                    vy: -Math.random() * 6 - 1,
+                    life: 1, decay: Math.random() * 0.04 + 0.02,
+                    r: Math.random() * 2.5 + 0.8,
+                    hue: Math.random() > 0.5 ? '#fff7d6' : '#fbbf24'
+                });
             }
-        }, 70);
-
-        // ===== SCROLL REVEAL (IntersectionObserver) =====
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
+        }
+        function updateSparks() {
+            sparks.forEach(s => { s.x += s.vx; s.y += s.vy; s.vy += 0.15; s.vx *= 0.98; s.life -= s.decay; });
+            sparks = sparks.filter(s => s.life > 0);
+        }
+        function drawSparks() {
+            sparks.forEach(s => {
+                ictx.globalAlpha = Math.max(s.life, 0);
+                ictx.fillStyle = s.hue;
+                ictx.beginPath(); ictx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2); ictx.fill();
             });
+            ictx.globalAlpha = 1;
+        }
+
+        // Robot drawing
+        function roundRect(c, x, y, w, h, r) {
+            c.beginPath();
+            c.moveTo(x + r, y);
+            c.arcTo(x + w, y, x + w, y + h, r);
+            c.arcTo(x + w, y + h, x, y + h, r);
+            c.arcTo(x, y + h, x, y, r);
+            c.arcTo(x, y, x + w, y, r);
+            c.closePath();
+        }
+
+        function drawRobot(x, y, s, handX, handY, writing, tGlobal) {
+            const c = ictx;
+            c.save();
+            c.translate(x, y);
+            c.scale(s, s);
+
+            // Treads
+            c.fillStyle = '#10141b';
+            roundRect(c, -32, -12, 64, 14, 6); c.fill();
+            for (let i = -24; i <= 24; i += 12) {
+                c.shadowBlur = 8; c.shadowColor = writing ? '#f97316' : '#22d3ee';
+                c.fillStyle = writing ? '#f97316' : '#22d3ee';
+                c.beginPath(); c.arc(i, -4, 4.5, 0, Math.PI * 2); c.fill();
+                c.shadowBlur = 0;
+            }
+
+            // Body
+            const bg = c.createLinearGradient(-26, -75, 26, -15);
+            bg.addColorStop(0, '#2b3342'); bg.addColorStop(1, '#151a22');
+            c.fillStyle = bg;
+            roundRect(c, -26, -75, 52, 62, 7); c.fill();
+            c.strokeStyle = 'rgba(249,115,22,0.5)'; c.lineWidth = 1.2;
+            roundRect(c, -26, -75, 52, 62, 7); c.stroke();
+
+            // Chest core
+            c.shadowBlur = 18; c.shadowColor = writing ? '#f97316' : '#3b82f6';
+            c.fillStyle = writing ? '#f97316' : '#3b82f6';
+            c.beginPath(); c.arc(0, -45, 9 + Math.sin(tGlobal * 6) * 1, 0, Math.PI * 2); c.fill();
+            c.shadowBlur = 0;
+
+            // Head
+            const hg = c.createLinearGradient(-19, -120, 19, -78);
+            hg.addColorStop(0, '#3a4254'); hg.addColorStop(1, '#1c212c');
+            c.fillStyle = hg;
+            roundRect(c, -19, -120, 38, 42, 9); c.fill();
+            c.strokeStyle = 'rgba(249,115,22,0.4)'; c.lineWidth = 1;
+            roundRect(c, -19, -120, 38, 42, 9); c.stroke();
+
+            // Eyes (LED)
+            c.fillStyle = '#0e1119';
+            roundRect(c, -14, -110, 28, 12, 5); c.fill();
+            c.shadowBlur = 12; c.shadowColor = writing ? '#f97316' : '#22d3ee';
+            c.fillStyle = writing ? '#f97316' : '#22d3ee';
+            roundRect(c, -10, -108, 7, 8, 2); c.fill();
+            roundRect(c, 3, -108, 7, 8, 2); c.fill();
+            c.shadowBlur = 0;
+
+            // Antenna
+            c.strokeStyle = '#4b5563'; c.lineWidth = 2;
+            c.beginPath(); c.moveTo(0, -120); c.lineTo(0, -132); c.stroke();
+            c.fillStyle = '#f97316'; c.shadowBlur = 10; c.shadowColor = '#f97316';
+            c.beginPath(); c.arc(0, -135, 4, 0, Math.PI * 2); c.fill();
+            c.shadowBlur = 0;
+
+            // Side fan (vent)
+            c.fillStyle = 'rgba(249,115,22,0.15)';
+            roundRect(c, -26, -30, 6, 20, 3); c.fill();
+
+            // ARM (2-segment IK to hand position)
+            const sx = -22, sy = -55;
+            const hx = handX - x, hy = handY - y;
+            let dx = hx - sx, dy = hy - sy;
+            const dist = Math.hypot(dx, dy) || 1;
+            const mx = sx + dx / 2, my = sy + dy / 2;
+            const ex = mx - (dy / dist) * 10, ey = my + (dx / dist) * 10;
+
+            c.lineCap = 'round';
+            c.strokeStyle = '#49536a'; c.lineWidth = 10;
+            c.beginPath(); c.moveTo(sx, sy); c.lineTo(ex, ey); c.stroke();
+            c.strokeStyle = '#64748b'; c.lineWidth = 7;
+            c.beginPath(); c.moveTo(ex, ey); c.lineTo(hx, hy); c.stroke();
+
+            c.shadowBlur = 10; c.shadowColor = '#f97316';
+            c.fillStyle = '#f97316'; c.beginPath(); c.arc(sx, sy, 7, 0, Math.PI * 2); c.fill();
+            c.shadowBlur = 0;
+            c.fillStyle = '#94a3b8'; c.beginPath(); c.arc(ex, ey, 5, 0, Math.PI * 2); c.fill();
+
+            // Torch at hand
+            c.save();
+            c.translate(hx, hy);
+            c.rotate(Math.atan2(dy, dx));
+            c.fillStyle = '#7c4a2a'; c.fillRect(0, -3, 16, 6);
+            c.fillStyle = '#f59e0b';
+            c.beginPath(); c.moveTo(16, -2.5); c.lineTo(26, 0); c.lineTo(16, 2.5); c.closePath(); c.fill();
+            if (writing) {
+                c.shadowBlur = 20; c.shadowColor = '#fbbf24';
+                c.fillStyle = '#fef3c7';
+                c.beginPath(); c.ellipse(28, 0, 5, 2.5, 0, 0, Math.PI * 2); c.fill();
+                c.shadowBlur = 0;
+            }
+            c.restore();
+
+            c.restore();
+        }
+
+        // ---- Intro sequence state ----
+        const TEXT = 'MUNG ART';
+        const textX0 = () => iw() * 0.18;
+        const textY = () => ih() * 0.62;
+        const textW = () => iw() * 0.64;
+        const robotX = () => iw() * 0.13;
+        const robotY = () => ih() * 0.9;
+
+        let introDone = false;
+        let introHold = 0; // seconds after writing finished
+        let startTime = null;
+
+        function runIntro() {
+            if (introDone) return;
+            if (!startTime) {
+                startTime = performance.now();
+                document.body.style.overflow = 'hidden';
+            }
+            const elapsed = (performance.now() - startTime) / 1000;
+            const total = 5.2;
+            let p = Math.min(elapsed / total, 1);
+
+            ictx.clearRect(0, 0, iw(), ih());
+
+            // backdrop hint of forge floor
+            const fg = ictx.createLinearGradient(0, ih()*0.75, 0, ih());
+            fg.addColorStop(0, 'rgba(249,115,22,0.05)'); fg.addColorStop(1, 'rgba(249,115,22,0.15)');
+            ictx.fillStyle = fg; ictx.fillRect(0, ih()*0.75, iw(), ih()*0.25);
+            ictx.strokeStyle = 'rgba(249,115,22,0.2)'; ictx.lineWidth = 2;
+            ictx.beginPath(); ictx.moveTo(0, ih()*0.75); ictx.lineTo(iw(), ih()*0.75); ictx.stroke();
+
+            // Written letters progress
+            const writing = p > 0.15 && p < 0.85;
+            const letterP = Math.min(Math.max((p - 0.15) / 0.7, 0), 1);
+
+            // Draw already-written text (burned into metal) under glow stroke
+            ictx.font = `900 ${ih()*0.12}px Vazirmatn, sans-serif`;
+            ictx.textBaseline = 'middle';
+            ictx.textAlign = 'left';
+
+            // Full faint background text (target)
+            ictx.fillStyle = 'rgba(249,115,22,0.06)';
+            ictx.fillText(TEXT, textX0(), textY());
+
+            // Written portion as glowing stroke + fill
+            const totalLen = ictx.measureText(TEXT).width;
+            const W_ = totalLen;
+            ictx.save();
+            ictx.beginPath();
+            ictx.rect(0, textY() - ih()*0.2, iw(), ih()*0.4); // clip
+            ictx.clip();
+            ictx.setLineDash([2000, 2000]);
+            ictx.lineDashOffset = 2000 - letterP * 2000;
+            ictx.strokeStyle = '#f97316';
+            ictx.lineWidth = 3;
+            ictx.shadowBlur = 25; ictx.shadowColor = '#f97316';
+            ictx.strokeText(TEXT, textX0(), textY());
+            ictx.restore();
+
+            // Bright fill appears progressively
+            ictx.save();
+            ictx.beginPath();
+            ictx.rect(textX0(), textY() - ih()*0.2, letterP * W_ + 10, ih()*0.4);
+            ictx.clip();
+            ictx.fillStyle = '#fdba74';
+            ictx.shadowBlur = 20; ictx.shadowColor = '#f97316';
+            ictx.fillText(TEXT, textX0(), textY());
+            ictx.restore();
+
+            // Robot position & hand
+            let robotXPos = robotX();
+            let handX, handY;
+            if (p < 0.15) {
+                // Robot slides in from left
+                const slide = p / 0.15;
+                robotXPos = -iw() * 0.3 + (robotX() + iw() * 0.3) * slide;
+                handX = robotXPos + 60; handY = textY();
+            } else if (writing) {
+                const wx = textX0() + letterP * W_;
+                handX = wx; handY = textY() - 6;
+                // Sparks at torch tip!
+                if (Math.random() < 0.9) spawnSparks(3, wx + 6, handY);
+            } else if (p >= 0.85) {
+                // Lift torch up in victory
+                const lift = Math.min((p - 0.85) / 0.15, 1);
+                handX = robotXPos + 90 - lift * 40;
+                handY = textY() - 40 * lift - 10;
+                if (Math.random() < 0.3) spawnSparks(2, handX + 10, handY);
+            } else {
+                handX = robotXPos + 70; handY = textY() + 40;
+            }
+
+            drawRobot(robotXPos, robotY(), Math.min(iw() / 420, 1.1), handX, handY, writing, elapsed);
+
+            updateSparks();
+            drawSparks();
+
+            // Persian subtitle fades in near end
+            if (p > 0.6) {
+                const a = Math.min((p - 0.6) / 0.2, 1);
+                ictx.globalAlpha = a;
+                ictx.fillStyle = '#d1d5db';
+                ictx.font = `600 ${ih()*0.035}px Vazirmatn, sans-serif`;
+                ictx.textAlign = 'center';
+                ictx.fillText('آتلیه مجسمه‌سازی استیم‌پانک — از آتش و فلز', iw()/2, ih()*0.78);
+                ictx.globalAlpha = 1;
+                ictx.textAlign = 'left';
+            }
+
+            // After finish: hold then fade out
+            if (p >= 1) {
+                introHold += 0.016;
+                if (introHold > 1.2) {
+                    intro.classList.add('done');
+                    setTimeout(() => intro.remove(), 1200);
+                    document.body.style.overflow = 'auto';
+                    // trigger reveals
+                    document.querySelectorAll('.reveal').forEach((el, idx) => {
+                        setTimeout(() => el.classList.add('visible'), 200 + idx * 120);
+                    });
+                    introDone = true;
+                    return;
+                }
+            }
+            requestAnimationFrame(runIntro);
+        }
+        requestAnimationFrame(runIntro);
+
+        // ===== SCROLL REVEAL for when content already visible =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
         }, { threshold: 0.15 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // ===== FLOATING DOCK SHOW ON SCROLL =====
+        // ===== FLOATING DOCK =====
         const dock = document.getElementById('actionDock');
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 150) dock.classList.add('show');
+            if (window.scrollY > 120 || introDone) dock.classList.add('show');
             else dock.classList.remove('show');
         });
 
         function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-        // ===== ADDRESS TOGGLE =====
         function toggleAddress() {
             const card = document.getElementById('addressCard');
             const chev = document.getElementById('addrChevron');
@@ -279,8 +489,7 @@
             chev.style.transform = card.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         }
 
-        // ===== INIT ICONS =====
-        window.onload = () => { lucide.createIcons(); };
+        window.onload = () => lucide.createIcons();
     </script>
 </body>
 </html>
