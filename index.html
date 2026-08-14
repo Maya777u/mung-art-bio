@@ -4,241 +4,283 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MUNG ART // آتلیه مجسمه‌سازی استیم‌پانک</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Vazirmatn Font & Lucide Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #060709; font-family: 'Vazirmatn', sans-serif; color: #f3f4f6; overflow-x: hidden; }
-        
-        /* Interactive Background Canvas */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #050607; font-family: 'Vazirmatn', sans-serif; color: #f3f4f6; overflow-x: hidden; }
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        /* Custom Custom Glow Buttons & Panels */
-        .bio-card {
-            background: rgba(18, 22, 30, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(249, 115, 22, 0.25);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* ====== CUSTOM METAL-FORGED CARDS (Riveted Steel Plates) ====== */
+        .forged-plate {
+            position: relative;
+            background: linear-gradient(160deg, rgba(30, 36, 48, 0.92), rgba(12, 14, 19, 0.96));
+            border: 2px solid rgba(249, 115, 22, 0.35);
+            border-radius: 4px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -2px 8px rgba(0, 0, 0, 0.5);
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .bio-card:active, .bio-card:hover {
-            transform: scale(1.02) translateY(-2px);
-            border-color: rgba(249, 115, 22, 0.8);
-            box-shadow: 0 0 25px rgba(249, 115, 22, 0.4), inset 0 0 10px rgba(249, 115, 22, 0.2);
+        .forged-plate::before {
+            content: '';
+            position: absolute; inset: 0; border-radius: 4px; pointer-events: none;
+            background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%);
+            background-size: 200% 100%; animation: sheen 4s linear infinite;
         }
+        @keyframes sheen { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .forged-plate:hover { border-color: rgba(249, 115, 22, 0.9); transform: translateY(-3px); box-shadow: 0 0 35px rgba(249, 115, 22, 0.35); }
 
-        .ember-button {
-            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.4);
-            transition: all 0.25s ease;
-        }
-        .ember-button:active { transform: scale(0.97); }
+        .rivet { position: absolute; width: 8px; height: 8px; background: radial-gradient(circle at 30% 30%, #9ca3af, #374151); border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        .rivet-tl { top: 6px; right: 6px; } .rivet-tr { top: 6px; left: 6px; }
+        .rivet-bl { bottom: 6px; right: 6px; } .rivet-br { bottom: 6px; left: 6px; }
 
-        /* Storytelling Animation Text */
-        @keyframes textGlow {
-            0%, 100% { text-shadow: 0 0 15px rgba(249, 115, 22, 0.6); }
-            50% { text-shadow: 0 0 30px rgba(249, 115, 22, 0.9), 0 0 10px rgba(251, 191, 36, 0.8); }
-        }
-        .text-glow { animation: textGlow 3s infinite; }
+        /* ====== STORY INTRO (Typewriter + Engrave) ====== */
+        #storyIntro { position: fixed; inset: 0; z-index: 100; background: #050607; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.8s ease; }
+        #storyIntro.hidden { opacity: 0; pointer-events: none; }
+        .typewriter { display: inline-block; overflow: hidden; white-space: nowrap; border-left: 3px solid #f97316; animation: blink 0.8s step-end infinite; font-size: 1.4rem; font-weight: 900; color: #fdba74; }
+        @keyframes blink { 50% { border-color: transparent; } }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #060709; }
-        ::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 2px; }
+        /* ====== SCROLL REVEAL ANIMATIONS ====== */
+        .reveal { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* ====== FLOATING ACTION DOCK (Interactive Menu) ====== */
+        #actionDock { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(80px); z-index: 60; display: flex; gap: 8px; padding: 8px; background: rgba(10, 12, 16, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(249, 115, 22, 0.4); border-radius: 18px; box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(249,115,22,0.15); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #actionDock.show { transform: translateX(-50%) translateY(0); }
+        .dock-btn { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: #151a23; border: 1px solid rgba(255,255,255,0.08); transition: all 0.25s ease; position: relative; }
+        .dock-btn:hover, .dock-btn:active { background: #ea580c; transform: scale(1.1) rotate(-8deg); box-shadow: 0 0 20px rgba(234, 88, 12, 0.5); }
+
+        /* Flash / Glow pulses */
+        @keyframes flashPulse { 0%, 100% { box-shadow: 0 0 8px rgba(249,115,22,0.3); } 50% { box-shadow: 0 0 30px rgba(249,115,22,0.9), 0 0 60px rgba(234,88,12,0.4); } }
+        .flash-glow { animation: flashPulse 2s infinite; }
+
+        ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: #050607; } ::-webkit-scrollbar-thumb { background: #ea580c; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 relative">
+<body class="min-h-screen relative">
 
-    <!-- Interactive Canvas Background -->
     <canvas id="bgCanvas"></canvas>
 
-    <!-- Main Mobile Showcase Container -->
-    <div class="w-full max-w-md mx-auto z-10 flex flex-col space-y-6 my-auto py-6">
+    <!-- ====== STORY INTRO OVERLAY ====== -->
+    <div id="storyIntro">
+        <div class="w-24 h-24 mb-6 relative">
+            <div class="absolute inset-0 rounded-3xl bg-orange-600/40 blur-xl animate-pulse"></div>
+            <div class="relative w-24 h-24 rounded-3xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center border-2 border-orange-300/40 shadow-2xl">
+                <i data-lucide="anvil" class="w-12 h-12 text-white"></i>
+            </div>
+        </div>
+        <div class="typewriter text-center px-4" id="storyText"></div>
+    </div>
 
-        <!-- Header / Storytelling Profile Section -->
-        <div class="bio-card rounded-3xl p-6 text-center relative overflow-hidden">
-            <!-- Ambient Light Overlay -->
-            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-40 h-40 bg-orange-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- ====== MAIN CONTENT ====== -->
+    <div class="relative z-10 max-w-md mx-auto px-4 pt-16 pb-32 flex flex-col space-y-5">
 
-            <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 p-0.5 shadow-xl shadow-orange-600/40 mb-4 border border-orange-400/40 relative group">
-                <div class="w-full h-full bg-[#0d1117] rounded-[14px] flex items-center justify-center overflow-hidden">
-                    <i data-lucide="anvil" class="w-10 h-10 text-orange-500 animate-pulse"></i>
+        <!-- PROFILE CARD -->
+        <div class="forged-plate reveal p-6 text-center">
+            <div class="rivet rivet-tl"></div><div class="rivet rivet-tr"></div>
+            <div class="rivet rivet-bl"></div><div class="rivet rivet-br"></div>
+
+            <div class="w-24 h-24 mx-auto rounded-full p-1 bg-gradient-to-tr from-orange-600 to-amber-400 shadow-lg shadow-orange-600/50 mb-4 flash-glow">
+                <div class="w-full h-full rounded-full bg-[#0d1117] flex items-center justify-center border-2 border-black/60">
+                    <span class="text-3xl font-black text-orange-500">M</span>
                 </div>
             </div>
 
-            <h1 class="text-xl font-black tracking-wider text-orange-400 text-glow">MUNG ART</h1>
-            <p class="text-xs text-gray-300 font-bold mt-1 tracking-wide">آتلیه مجسمه‌سازی استیم‌پانک & هنر فلزات</p>
-            <p class="text-[11px] text-gray-400 mt-2 leading-relaxed">خلق آثار منحصربه‌فرد هنری با قطعات اسقاطی و آهن‌پاره • سفارش و ارسال به سراسر کشور</p>
+            <h1 class="text-2xl font-black tracking-wider text-orange-400" style="text-shadow: 0 0 25px rgba(249,115,22,0.7);">MUNG ART</h1>
+            <div class="w-16 h-0.5 bg-gradient-to-r from-transparent via-orange-500 to-transparent mx-auto my-3"></div>
+            <p class="text-sm font-bold text-gray-200">آتلیه مجسمه‌سازی استیم‌پانک</p>
+            <p class="text-xs text-gray-400 mt-2 leading-relaxed">خلق آثار منحصربه‌فرد از دل آهن‌پاره و قطعات اسقاطی — هر قطعه، یک داستان زنده از آتش و فلز</p>
         </div>
 
-        <!-- Action Links Section -->
-        <div class="flex flex-col space-y-3.5">
+        <!-- ACTION BUTTONS (Custom Forged Cards) -->
+        <div class="flex flex-col space-y-4">
 
-            <!-- Telegram Button -->
-            <a href="https://t.me/mung_art" target="_blank" class="bio-card rounded-2xl p-4 flex items-center justify-between group cursor-pointer">
+            <a href="https://t.me/mung_art" target="_blank" class="forged-plate reveal p-4 flex items-center justify-between group cursor-pointer">
+                <div class="rivet rivet-tl"></div><div class="rivet rivet-tr"></div><div class="rivet rivet-bl"></div><div class="rivet rivet-br"></div>
                 <div class="flex items-center space-x-3 space-x-reverse">
-                    <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover:scale-110 transition">
+                    <div class="w-11 h-11 rounded-lg bg-sky-500/15 border border-sky-400/40 flex items-center justify-center text-sky-400 group-hover:rotate-12 transition">
                         <i data-lucide="send" class="w-5 h-5"></i>
                     </div>
                     <div class="text-right">
-                        <h3 class="font-bold text-sm text-gray-100">ارتباط در تلگرام</h3>
+                        <h3 class="font-bold text-sm">ارتباط در تلگرام</h3>
                         <p class="text-[10px] text-gray-400">مشاوره، استعلام قیمت و ثبت سفارش</p>
                     </div>
                 </div>
-                <i data-lucide="chevron-left" class="w-4 h-4 text-gray-500 group-hover:text-orange-400 transition"></i>
+                <i data-lucide="chevron-left" class="w-4 h-4 text-orange-400 group-hover:translate-x-1 transition"></i>
             </a>
 
-            <!-- Bale Messenger Button -->
-            <a href="https://ble.ir/mung_art" target="_blank" class="bio-card rounded-2xl p-4 flex items-center justify-between group cursor-pointer">
+            <a href="https://ble.ir/mung_art" target="_blank" class="forged-plate reveal p-4 flex items-center justify-between group cursor-pointer">
+                <div class="rivet rivet-tl"></div><div class="rivet rivet-tr"></div><div class="rivet rivet-bl"></div><div class="rivet rivet-br"></div>
                 <div class="flex items-center space-x-3 space-x-reverse">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition">
+                    <div class="w-11 h-11 rounded-lg bg-emerald-500/15 border border-emerald-400/40 flex items-center justify-center text-emerald-400 group-hover:rotate-12 transition">
                         <i data-lucide="message-square" class="w-5 h-5"></i>
                     </div>
                     <div class="text-right">
-                        <h3 class="font-bold text-sm text-gray-100">پیام‌رسان بله</h3>
+                        <h3 class="font-bold text-sm">پیام‌رسان بله</h3>
                         <p class="text-[10px] text-gray-400">ارسال پیام مستقیم در اپلیکیشن بله</p>
                     </div>
                 </div>
-                <i data-lucide="chevron-left" class="w-4 h-4 text-gray-500 group-hover:text-orange-400 transition"></i>
+                <i data-lucide="chevron-left" class="w-4 h-4 text-orange-400 group-hover:translate-x-1 transition"></i>
             </a>
 
-            <!-- Call Button -->
-            <a href="tel:09120000000" class="bio-card rounded-2xl p-4 flex items-center justify-between group cursor-pointer">
+            <a href="tel:09120000000" class="forged-plate reveal p-4 flex items-center justify-between group cursor-pointer">
+                <div class="rivet rivet-tl"></div><div class="rivet rivet-tr"></div><div class="rivet rivet-bl"></div><div class="rivet rivet-br"></div>
                 <div class="flex items-center space-x-3 space-x-reverse">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 transition">
+                    <div class="w-11 h-11 rounded-lg bg-amber-500/15 border border-amber-400/40 flex items-center justify-center text-amber-400 group-hover:rotate-12 transition">
                         <i data-lucide="phone-call" class="w-5 h-5"></i>
                     </div>
                     <div class="text-right">
-                        <h3 class="font-bold text-sm text-gray-100">تماس تلفنی مستقیم</h3>
-                        <p class="text-[10px] text-gray-400">پاسخگویی سریع برای هماهنگی و خرید</p>
+                        <h3 class="font-bold text-sm">تماس تلفنی</h3>
+                        <p class="text-[10px] text-gray-400">پاسخگویی برای هماهنگی سفارش</p>
                     </div>
                 </div>
-                <i data-lucide="chevron-left" class="w-4 h-4 text-gray-500 group-hover:text-orange-400 transition"></i>
+                <i data-lucide="chevron-left" class="w-4 h-4 text-orange-400 group-hover:translate-x-1 transition"></i>
             </a>
 
-            <!-- Location Button -->
-            <div onclick="toggleAddress()" class="bio-card rounded-2xl p-4 flex items-center justify-between group cursor-pointer">
+            <div onclick="toggleAddress()" class="forged-plate reveal p-4 flex items-center justify-between group cursor-pointer">
+                <div class="rivet rivet-tl"></div><div class="rivet rivet-tr"></div><div class="rivet rivet-bl"></div><div class="rivet rivet-br"></div>
                 <div class="flex items-center space-x-3 space-x-reverse">
-                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-110 transition">
+                    <div class="w-11 h-11 rounded-lg bg-rose-500/15 border border-rose-400/40 flex items-center justify-center text-rose-400 group-hover:rotate-12 transition">
                         <i data-lucide="map-pin" class="w-5 h-5"></i>
                     </div>
                     <div class="text-right">
-                        <h3 class="font-bold text-sm text-gray-100">آدرس آتلیه و کارگاه</h3>
-                        <p class="text-[10px] text-gray-400">نمایش موقعیت مکانی و آدرس حضوری</p>
+                        <h3 class="font-bold text-sm">آدرس آتلیه</h3>
+                        <p class="text-[10px] text-gray-400">نمایش موقعیت و مسیریابی</p>
                     </div>
                 </div>
-                <i data-lucide="chevron-down" id="addrChevron" class="w-4 h-4 text-gray-500 transition duration-300"></i>
+                <i data-lucide="chevron-down" id="addrChevron" class="w-4 h-4 text-orange-400 transition"></i>
             </div>
 
-            <!-- Expandable Address Details -->
-            <div id="addressCard" class="hidden bio-card rounded-2xl p-5 text-xs space-y-3 animate-fadeIn border-t-0">
-                <p class="text-gray-300 leading-relaxed">📍 **آدرس کارگاه:** جاده هراز، محدوده پلور - آسک، آتلیه مجسمه‌سازی MUNG ART</p>
-                <div class="flex space-x-2 space-x-reverse pt-2">
-                    <a href="https://maps.google.com" target="_blank" class="flex-1 py-2 rounded-xl bg-orange-600/30 text-orange-400 border border-orange-500/40 text-center font-bold hover:bg-orange-600 hover:text-white transition">
-                        مسیریابی در گوگل مپ
-                    </a>
-                </div>
+            <div id="addressCard" class="forged-plate hidden p-5 text-xs space-y-3">
+                <p class="text-gray-300 leading-relaxed">📍 جاده هراز، محدوده پلور — آتلیه مجسمه‌سازی MUNG ART</p>
+                <a href="https://maps.google.com" target="_blank" class="block py-2.5 rounded-lg bg-orange-600/25 text-orange-400 border border-orange-500/40 text-center font-bold hover:bg-orange-600 hover:text-white transition">🗺 مسیریابی در گوگل مپ</a>
             </div>
-
         </div>
 
-        <!-- Instagram Direct Link Footer -->
-        <div class="text-center pt-2">
-            <a href="https://instagram.com/mung_art" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse text-xs font-bold text-gray-400 hover:text-orange-400 transition">
-                <i data-lucide="instagram" class="w-4 h-4 text-orange-500"></i>
-                <span>مشاهده نمونه‌کارهای بیشتر در اینستاگرام @mung_art</span>
-            </a>
-        </div>
+        <!-- INSTAGRAM FOOTER -->
+        <a href="https://instagram.com/mung_art" target="_blank" class="reveal flex items-center justify-center space-x-2 space-x-reverse text-xs font-bold text-gray-400 hover:text-orange-400 transition pt-2">
+            <i data-lucide="instagram" class="w-4 h-4 text-orange-500"></i>
+            <span>مشاهده نمونه‌کارها در @mung_art</span>
+        </a>
 
     </div>
 
-    <!-- Interactive Sparks Engine -->
+    <!-- ====== FLOATING ACTION DOCK ====== -->
+    <div id="actionDock">
+        <a href="tel:09120000000" class="dock-btn text-amber-400"><i data-lucide="phone-call" class="w-5 h-5"></i></a>
+        <a href="https://t.me/mung_art" target="_blank" class="dock-btn text-sky-400"><i data-lucide="send" class="w-5 h-5"></i></a>
+        <a href="https://ble.ir/mung_art" target="_blank" class="dock-btn text-emerald-400"><i data-lucide="message-square" class="w-5 h-5"></i></a>
+        <a href="https://instagram.com/mung_art" target="_blank" class="dock-btn text-pink-400"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+        <button onclick="scrollToTop()" class="dock-btn text-orange-400"><i data-lucide="arrow-up" class="w-5 h-5"></i></button>
+    </div>
+
+    <!-- ====== SCRIPTS ====== -->
     <script>
+        // ===== INTERACTIVE EMBER BACKGROUND (Animated Background) =====
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
+        let W, H, embers = [], smoke = [];
 
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
+        function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
 
-        // Particles
-        for(let i = 0; i < 50; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 2 + 0.5,
-                vy: -Math.random() * 1.2 - 0.3,
-                vx: (Math.random() - 0.5) * 0.6,
-                alpha: Math.random() * 0.6 + 0.2
+        for (let i = 0; i < 70; i++) {
+            embers.push({
+                x: Math.random() * W, y: Math.random() * H,
+                r: Math.random() * 3 + 1.5,
+                vy: -Math.random() * 1.8 - 0.6,
+                vx: (Math.random() - 0.5) * 0.8,
+                glow: Math.random() * 0.7 + 0.3,
+                flicker: Math.random() * 0.05
             });
         }
+        for (let i = 0; i < 12; i++) {
+            smoke.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 60 + 30, alpha: 0.04, vy: -0.15 });
+        }
 
-        // Touch Interaction
-        let touchX = 0, touchY = 0;
-        window.addEventListener('touchmove', (e) => {
-            touchX = e.touches[0].clientX;
-            touchY = e.touches[0].clientY;
-            for(let i=0; i<3; i++) {
-                particles.push({
-                    x: touchX,
-                    y: touchY,
-                    radius: Math.random() * 3 + 1,
-                    vy: (Math.random() - 0.5) * 2,
-                    vx: (Math.random() - 0.5) * 2,
-                    alpha: 0.9
-                });
-            }
-        });
-
+        let t = 0;
         function render() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            t += 0.016;
+            ctx.clearRect(0, 0, W, H);
+
+            // Smoke
             ctx.fillStyle = '#f97316';
-            
-            for(let i = particles.length - 1; i >= 0; i--) {
-                let p = particles[i];
-                p.y += p.vy;
-                p.x += p.vx;
-                p.alpha -= 0.003;
+            smoke.forEach(s => {
+                s.y += s.vy; if (s.y < -s.r) s.y = H + s.r;
+                let g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r);
+                g.addColorStop(0, `rgba(249,115,22,${s.alpha})`);
+                g.addColorStop(1, 'rgba(249,115,22,0)');
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+            });
 
-                if(p.y < 0 || p.alpha <= 0) {
-                    particles[i] = {
-                        x: Math.random() * canvas.width,
-                        y: canvas.height + 10,
-                        radius: Math.random() * 2 + 0.5,
-                        vy: -Math.random() * 1.2 - 0.3,
-                        vx: (Math.random() - 0.5) * 0.6,
-                        alpha: Math.random() * 0.6 + 0.2
-                    };
-                }
-
-                ctx.globalAlpha = p.alpha;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            // Embers with glow + flicker
+            embers.forEach(e => {
+                e.y += e.vy; e.x += e.vx;
+                if (e.y < -10) { e.y = H + 10; e.x = Math.random() * W; }
+                const flick = Math.sin(t * 8 + e.x) * e.flicker;
+                ctx.shadowBlur = 15 * e.glow;
+                ctx.shadowColor = '#f97316';
+                ctx.fillStyle = `rgba(255, ${150 + Math.random() * 80}, 60, ${e.glow})`;
+                ctx.beginPath(); ctx.arc(e.x, e.y, e.r + flick, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+            });
             requestAnimationFrame(render);
         }
         render();
 
-        // Toggle Address Box
+        // Touch sparks
+        window.addEventListener('touchmove', (e) => {
+            const t = e.touches[0];
+            for (let i = 0; i < 5; i++) embers.push({ x: t.clientX, y: t.clientY, r: Math.random() * 4 + 1, vy: (Math.random() - 0.5) * 3, vx: (Math.random() - 0.5) * 3, glow: 1, flicker: 0.1 });
+        }, { passive: true });
+
+        // ===== STORY INTRO (Typewriter storytelling) =====
+        const storyText = "هر تکه آهن، یک داستان است...";
+        const storyEl = document.getElementById('storyText');
+        let i = 0;
+        const typeInterval = setInterval(() => {
+            storyEl.textContent = storyText.slice(0, i + 1);
+            i++;
+            if (i >= storyText.length) {
+                clearInterval(typeInterval);
+                setTimeout(() => {
+                    const intro = document.getElementById('storyIntro');
+                    intro.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                }, 900);
+            }
+        }, 70);
+
+        // ===== SCROLL REVEAL (IntersectionObserver) =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // ===== FLOATING DOCK SHOW ON SCROLL =====
+        const dock = document.getElementById('actionDock');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 150) dock.classList.add('show');
+            else dock.classList.remove('show');
+        });
+
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        // ===== ADDRESS TOGGLE =====
         function toggleAddress() {
             const card = document.getElementById('addressCard');
             const chev = document.getElementById('addrChevron');
-            if(card.classList.contains('hidden')) {
-                card.classList.remove('hidden');
-                chev.style.transform = 'rotate(180deg)';
-            } else {
-                card.classList.add('hidden');
-                chev.style.transform = 'rotate(0deg)';
-            }
+            card.classList.toggle('hidden');
+            chev.style.transform = card.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         }
 
-        window.onload = () => lucide.createIcons();
+        // ===== INIT ICONS =====
+        window.onload = () => { lucide.createIcons(); };
     </script>
 </body>
 </html>
